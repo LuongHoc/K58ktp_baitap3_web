@@ -85,7 +85,63 @@ Chọn: Tải xuống cho Windows – AMD64
 
 Sau đó bấm OK
 
+2.3 Bật tích hợp WSL 
 
+- Mở Docker Desktop → Settings → Resources → WSL Integration
+
+- Bật:
+
+“Enable integration with my default WSL distro”
+
+“Ubuntu”
+
+Sau đó bấm Apply & Restart
+
+<img width="1916" height="1080" alt="image" src="https://github.com/user-attachments/assets/c6a33091-5bfd-4714-80f9-c77e75f65f4a" />
+
+🔹 Bước 5: Kiểm tra Docker trong Ubuntu
+
+Mở lại terminal Ubuntu (WSL2) và gõ:
+
+docker version
+
+
+Nếu bạn thấy:
+
+Client: Docker Engine
+Server: Docker Engine
+
+
+→ Docker đã hoạt động thành công 🎉
+
+🔹 Bước 6: Test container mẫu
+
+Gõ:
+
+docker run hello-world
+
+
+Kết quả mong đợi:
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+
+→ Nghĩa là Docker Desktop + WSL2 đã hoạt động ổn định.
+
+🔹 Bước 7: Kiểm tra Docker Compose
+
+Docker Desktop cài sẵn docker compose nên bạn chỉ cần kiểm tra:
+
+docker compose version
+
+
+Nếu thấy ví dụ:
+
+Docker Compose version v2.29.0
+
+
+→ OK, sẵn sàng để dùng file docker-compose.yml cho bài tập.
 
 
 
