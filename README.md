@@ -353,6 +353,197 @@ Grafana	3000	http://localhost:3000
 
 <img width="1879" height="990" alt="image" src="https://github.com/user-attachments/assets/fd017a9f-aadc-4ba5-9990-8748c8c2763a" />
 
+## 4. LẬP TRÌNH WEB FRONTEND + BACKEND (WEB IoT)
+
+Mục tiêu: 
+
+- Tạo một web IoT giám sát nhiệt độ – độ ẩm realtime:
+
+- Node-RED sinh dữ liệu cảm biến (giả lập).
+
+- Node-RED lưu vào InfluxDB để hiển thị biểu đồ.
+
+- Frontend index.html gọi API từ Node-RED, hiển thị thông tin hiện tại.
+
+- Grafana vẽ biểu đồ trực quan từ dữ liệu InfluxDB.
+
+4.1 Cấu hình Node-RED (Backend API)
+- Mở Node-RED
+
+Truy cập: http://localhost:1880
+
+- Cài thêm các node cần thiết
+
+Vào menu → Manage palette → Install
+
+Tìm và cài 3 gói:
+
+node-red-contrib-influxdb
+
+node-red-dashboard
+
+node-red-node-random
+
+<img width="1917" height="1021" alt="image" src="https://github.com/user-attachments/assets/5b85bc0c-2fc5-4d16-addf-1afaa7c578bc" />
+
+4.3 Tạo Flow mới
+
+Chọn tab mới và tạo các node như sau:
+
+🔹 Flow mô tả:
+[Inject] → [Function: Sinh dữ liệu]
+     ↘
+     [InfluxDB out] (ghi vào DB)
+     ↘
+     [HTTP In] → [InfluxDB in] → [HTTP Response]
+
+4️⃣ Cấu hình từng node
+🟩 Inject node
+
+Name: Cập nhật cảm biến
+
+Interval: every 10 seconds
+
+Output: timestamp
+
+🟧 Function node (sinh dữ liệu)
+
+Double-click và dán:
+
+msg.payload = [
+  {
+    measurement: "sensors",
+    fields: {
+      temperature: Math.round(Math.random() * 5 + 25),
+      humidity: Math.round(Math.random() * 20 + 50)
+    },
+    tags: {
+      device: "sensor_A1"
+    }
+  }
+];
+return msg;
+
+🟪 InfluxDB out
+
+Server: influxdb
+
+Database: iot_data
+
+Measurement: sensors
+
+👉 Sau đó Deploy — dữ liệu sẽ bắt đầu ghi vào InfluxDB 🎉
+
+5️⃣ Tạo API trả JSON cho frontend
+
+Kéo thêm 3 node:
+
+[HTTP In] → [InfluxDB in] → [HTTP Response]
+
+Cấu hình:
+
+HTTP In
+
+Method: GET
+
+URL: /api/sensor
+
+InfluxDB in
+
+Query:
+
+SELECT * FROM sensors ORDER BY time DESC LIMIT 1
+
+
+HTTP Response
+
+Giữ mặc định
+
+👉 Deploy lại
+Mở trình duyệt và thử:
+http://localhost:1880/api/sensor
+
+➡️ Nếu hiện ra JSON như:
+
+[
+  {
+    "time": "2025-11-03T02:20:30Z",
+    "temperature": 28,
+    "humidity": 61,
+    "device": "sensor_A1"
+  }
+]
+
+
+→ Là Node-RED backend đã hoạt động OK ✅
+
+🌐 Bước 2 – Tạo Frontend (index.html)
+
+Tạo file trong thư mục /frontend/index.html
+(Nó sẽ được Nginx serve qua http://localhost
+)
+
+✳️ Nội dung mẫu:
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Giám sát IoT - Lương Văn Học</title>
+  <style>
+    body { font-family: Arial; text-align: center; background: #f7f9fb; }
+    h1 { color: #333; }
+    .sensor {
+      display: inline-block;
+      padding: 20px;
+      margin: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>🌡️ Giám sát cảm biến IoT (Docker + Node-RED + Grafana)</h1>
+  <div id="data">
+    <div class="sensor">
+      <h3>Nhiệt độ: <span id="temp">--</span> °C</h3>
+      <h3>Độ ẩm: <span id="hum">--</span> %</h3>
+    </div>
+  </div>
+  <script>
+    async function updateData() {
+      const res = await fetch("http://localhost:1880/api/sensor");
+      const data = await res.json();
+      if (data && data[0]) {
+        document.getElementById("temp").innerText = data[0].temperature;
+        document.getElementById("hum").innerText = data[0].humidity;
+      }
+    }
+    setInterval(updateData, 5000);
+    updateData();
+  </script>
+</body>
+</html>
+
+📊 Bước 3 – Hiển thị biểu đồ trong Grafana
+
+Truy cập 👉 http://localhost:3000
+
+Add Data Source → chọn InfluxDB
+
+URL: http://influxdb:8086
+
+Database: iot_data
+
+Save & Test ✅
+
+Tạo Dashboard → Add Panel → Query:
+
+SELECT mean("temperature") FROM "sensors" WHERE $timeFilter GROUP BY time(10s)
+
+
+Bạn sẽ thấy biểu đồ realtime chạy rất đẹp 🎉
+
 
 
 
