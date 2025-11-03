@@ -250,8 +250,110 @@ Nhấn Ctrl + O → Enter để lưu
 
 Nhấn Ctrl + X để thoát
 
+<img width="1893" height="994" alt="image" src="https://github.com/user-attachments/assets/dd2c0651-af9a-4bc0-b16c-8590c4d50e2a" />
+
+3.4 Tạo thư mục giao diện web
+
+- Trong Ubuntu ( ở thư mục /mnt/d/baitap3_web), gõ: mkdir frontend
+
+- Tạo file index.html cơ bản để kiểm tra: nano frontend/index.html
+
+Dán nội dung dưới đây:
+
+```
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Lương Văn Học</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      text-align: center;
+      padding: 80px;
+    }
+    h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 20px;
+    }
+    .btn {
+      background-color: white;
+      color: #764ba2;
+      padding: 12px 25px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌍 Website Lương Văn Học</h1>
+  <p>Chào mừng bạn đến với hệ thống web chạy trên Docker + WSL2</p>
+  <a href="/nodered/" class="btn">Truy cập Node-RED</a>
+  <a href="/grafana/" class="btn">Xem biểu đồ Grafana</a>
+</body>
+</html>
+```
+
+- Lưu lại file
+
+Ctrl + O → Enter → Ctrl + X
+
+3.5 Chạy toàn bộ hệ thống
+
+- Giờ đã có đủ 3 thành phần:
+
+docker-compose.yml
+
+nginx.conf
+
+frontend/index.html
+
+- Chạy: docker compose up -d
 
 
+Docker sẽ bắt đầu tải và chạy 6 container:
+
+mariadb, phpmyadmin, nodered, influxdb, grafana, nginx
+
+<img width="1914" height="991" alt="image" src="https://github.com/user-attachments/assets/387be6b8-a53c-4172-8e6b-86d8edb49a1d" />
+
+<img width="1890" height="1000" alt="image" src="https://github.com/user-attachments/assets/ab6427d7-ffc3-404c-9135-656c9aabdbd6" />
+
+- Sau khi chạy xong kiểm tra container: docker ps
+
+Kết quả mong đợi (ví dụ):
+
+CONTAINER ID   IMAGE                 PORTS
+xxxxxx         nginx:latest          0.0.0.0:80->80/tcp
+xxxxxx         grafana/grafana       0.0.0.0:3000->3000/tcp
+xxxxxx         influxdb:1.8          0.0.0.0:8086->8086/tcp
+xxxxxx         nodered/node-red      0.0.0.0:1880->1880/tcp
+xxxxxx         phpmyadmin/phpmyadmin 0.0.0.0:8080->80/tcp
+xxxxxx         mariadb:10.6          0.0.0.0:3306->3306/tcp
+
+🌐 Bước 6: Kiểm tra trên trình duyệt
+Dịch vụ	Cổng	Truy cập
+Trang chính (Nginx)	80	http://localhost
+
+phpMyAdmin	8080	http://localhost:8080
+
+Node-RED	1880	http://localhost:1880
+
+Grafana	3000	http://localhost:3000
+
+Khi bạn chạy xong lệnh docker compose up -d, hãy chụp lại màn hình kết quả docker ps và gửi tôi xem nhé,
+để tôi hướng dẫn bạn phần 5: Kiểm tra hoạt động & khắc phục lỗi (nếu có).
 
 
 
