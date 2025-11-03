@@ -44,7 +44,7 @@ Yêu cầu     : LẬP TRÌNH ỨNG DỤNG WEB trên nền linux
 
 ## 1. Chọn phương án Docker Desktop + WSL2
 
-1. Bước 1. Bật WSL2 (Windows Subsystem for Linux)
+1.  Bật WSL2 (Windows Subsystem for Linux)
 
 - Mở PowerShell (Admin) → chạy: wsl --install
 
@@ -57,7 +57,15 @@ Thấy Ubuntu có “Version 2” là OK.
 
 <img width="1916" height="1028" alt="image" src="https://github.com/user-attachments/assets/4ba9361f-3e07-4d07-98c1-08ab29c7c17f" />
 
+2. Cài Ubuntu
+- Nếu WSL chưa cài Ubuntu: wsl --install -d Ubuntu-22.04
+- Sau khi cài xong:
 
+Chạy Ubuntu (gõ “Ubuntu” trong Start)
+
+Tạo username hoc và password 123456(nhập 2 lần)
+
+<img width="1893" height="1032" alt="image" src="https://github.com/user-attachments/assets/a1c08ee9-1409-41dc-bd91-20c86ad70e80" />
 
 
 
