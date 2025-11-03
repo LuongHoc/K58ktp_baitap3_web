@@ -332,17 +332,10 @@ mariadb, phpmyadmin, nodered, influxdb, grafana, nginx
 
 - Sau khi chạy xong kiểm tra container: docker ps
 
-Kết quả mong đợi (ví dụ):
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/4ae33612-da37-4436-9a5a-7d51f2cc71ae" />
 
-CONTAINER ID   IMAGE                 PORTS
-xxxxxx         nginx:latest          0.0.0.0:80->80/tcp
-xxxxxx         grafana/grafana       0.0.0.0:3000->3000/tcp
-xxxxxx         influxdb:1.8          0.0.0.0:8086->8086/tcp
-xxxxxx         nodered/node-red      0.0.0.0:1880->1880/tcp
-xxxxxx         phpmyadmin/phpmyadmin 0.0.0.0:8080->80/tcp
-xxxxxx         mariadb:10.6          0.0.0.0:3306->3306/tcp
+3.6 Kiểm tra trên trình duyệt
 
-🌐 Bước 6: Kiểm tra trên trình duyệt
 Dịch vụ	Cổng	Truy cập
 Trang chính (Nginx)	80	http://localhost
 
@@ -352,10 +345,13 @@ Node-RED	1880	http://localhost:1880
 
 Grafana	3000	http://localhost:3000
 
-Khi bạn chạy xong lệnh docker compose up -d, hãy chụp lại màn hình kết quả docker ps và gửi tôi xem nhé,
-để tôi hướng dẫn bạn phần 5: Kiểm tra hoạt động & khắc phục lỗi (nếu có).
+<img width="1847" height="966" alt="image" src="https://github.com/user-attachments/assets/ec53cd6d-0a40-4689-a777-4616e065f16d" />
 
+<img width="1910" height="968" alt="image" src="https://github.com/user-attachments/assets/c6a88bcb-6cee-4cdb-aded-5d4761fcd558" />
 
+<img width="1903" height="972" alt="image" src="https://github.com/user-attachments/assets/28e047fc-4278-42d9-8517-05d32afcf994" />
+
+<img width="1879" height="990" alt="image" src="https://github.com/user-attachments/assets/fd017a9f-aadc-4ba5-9990-8748c8c2763a" />
 
 
 
