@@ -388,94 +388,144 @@ node-red-node-random
 
 4.3 Tạo Flow mới
 
-Chọn tab mới và tạo các node như sau:
+- Chọn tab mới và tạo các node như sau:
 
-🔹 Flow mô tả:
-[Inject] → [Function: Sinh dữ liệu]
-     ↘
-     [InfluxDB out] (ghi vào DB)
-     ↘
-     [HTTP In] → [InfluxDB in] → [HTTP Response]
+<img width="1911" height="974" alt="image" src="https://github.com/user-attachments/assets/080bba59-749b-4610-8a0a-fae9f249822d" />
 
-4️⃣ Cấu hình từng node
-🟩 Inject node
+- Cấu hình từng node
 
-Name: Cập nhật cảm biến
+a. Inject – “Cập nhật cảm biến (1s)”
 
-Interval: every 10 seconds
+- Kiểu: inject
 
-Output: timestamp
+- Tên: Cập nhật cảm biến (1s)
 
-🟧 Function node (sinh dữ liệu)
+- Repeat: Every 1 second
 
-Double-click và dán:
+- Output: timestamp
 
-msg.payload = [
-  {
-    measurement: "sensors",
-    fields: {
-      temperature: Math.round(Math.random() * 5 + 25),
-      humidity: Math.round(Math.random() * 20 + 50)
-    },
-    tags: {
-      device: "sensor_A1"
-    }
-  }
-];
+- Chức năng: Kích hoạt tự động mỗi giây để sinh dữ liệu cảm biến giả.
+
+<img width="1914" height="984" alt="image" src="https://github.com/user-attachments/assets/42b7428c-388f-401b-aaf4-ff811b9e9ea4" />
+
+b. Function – “Sinh dữ liệu giả (sensors)”
+
+- Kiểu: function
+
+- Tên: Sinh dữ liệu giả (sensors)
+
+- Code:
+```
+msg.measurement = "sensors";        // tên measurement
+msg.tags = { device: "sensor_A1" }; // tag tuỳ ý
+msg.payload = {
+  temperature: Math.round(Math.random() * 5 + 25), // số
+  humidity: Math.round(Math.random() * 30 + 50)    // số
+};
 return msg;
 
-🟪 InfluxDB out
+```
 
-Server: influxdb
+- Chức năng: Sinh ngẫu nhiên dữ liệu nhiệt độ (25–30°C) và độ ẩm (50–70%) gửi sang InfluxDB.
 
-Database: iot_data
+<img width="1914" height="990" alt="image" src="https://github.com/user-attachments/assets/26cfa358-f515-4d65-8b54-0fb2bd1edb64" />
 
-Measurement: sensors
+c. InfluxDB Out – “Ghi dữ liệu cảm biến”
 
-👉 Sau đó Deploy — dữ liệu sẽ bắt đầu ghi vào InfluxDB 🎉
+- Kiểu: influxdb out
 
-5️⃣ Tạo API trả JSON cho frontend
+- Tên: Ghi dữ liệu cảm biến
 
-Kéo thêm 3 node:
+- Server: [v1.x] influxdb
 
-[HTTP In] → [InfluxDB in] → [HTTP Response]
+- Database: iot_data
 
-Cấu hình:
+- Measurement: sensors
 
-HTTP In
+- Chức năng: Ghi dữ liệu sensor sinh ra vào database iot_data.
 
-Method: GET
+<img width="1903" height="960" alt="image" src="https://github.com/user-attachments/assets/7ef657e7-798d-4979-bfe0-607726b7cf42" />
 
-URL: /api/sensor
+<img width="1919" height="947" alt="image" src="https://github.com/user-attachments/assets/ef633b6b-39e3-4106-8bfd-3e40a18322f5" />
 
-InfluxDB in
+d. HTTP In – “API - GET /api/sensor”
 
-Query:
+- Kiểu: http in
 
-SELECT * FROM sensors ORDER BY time DESC LIMIT 1
+- Tên: API - GET /api/sensor
 
+- Method: GET
 
-HTTP Response
+- URL: /api/sensor
 
-Giữ mặc định
+- Chức năng: Tạo endpoint API để client (frontend) truy vấn dữ liệu cảm biến.
 
-👉 Deploy lại
-Mở trình duyệt và thử:
-http://localhost:1880/api/sensor
+<img width="1914" height="951" alt="image" src="https://github.com/user-attachments/assets/99cc2b70-a07c-4af3-9d99-da2ff0c4578e" />
 
-➡️ Nếu hiện ra JSON như:
+e. Function – “Tạo query”
 
-[
-  {
-    "time": "2025-11-03T02:20:30Z",
-    "temperature": 28,
-    "humidity": 61,
-    "device": "sensor_A1"
-  }
-]
+- Kiểu: function
 
+- Tên: Tạo query
 
-→ Là Node-RED backend đã hoạt động OK ✅
+- Code:
+```
+
+msg.query = "SELECT * FROM sensors ORDER BY time DESC LIMIT 5";
+return msg;
+
+```
+
+- Chức năng: Tạo câu truy vấn lấy 5 bản ghi cảm biến mới nhất từ InfluxDB.
+
+<img width="1920" height="1019" alt="image" src="https://github.com/user-attachments/assets/30ef629b-2d7e-485e-8c68-24df419f2ec5" />
+
+f. InfluxDB In – “Đọc Influx (v1.x)”
+
+- Kiểu: influxdb in
+
+- Server: [v1.x] influxdb
+
+- Database: iot_data
+
+- Query: lấy từ msg.query
+
+- Chức năng: Truy vấn dữ liệu cảm biến từ InfluxDB theo câu query đã tạo.
+
+<img width="1913" height="1045" alt="image" src="https://github.com/user-attachments/assets/1e2c1d6f-5784-4e87-8026-ff6d6d20ac19" />
+
+g. Function – “Trả JSON + CORS”
+
+- Kiểu: function
+
+- Tên: Trả JSON + CORS
+
+- Code:
+```
+msg.headers = {
+  'Content-Type': 'application/json',
+  'Access-Control-Allow-Origin': '*'
+};
+msg.statusCode = 200;
+return msg;
+
+```
+
+- Chức năng: Định dạng dữ liệu đầu ra JSON, bật CORS để frontend truy cập được.
+
+<img width="1920" height="1010" alt="image" src="https://github.com/user-attachments/assets/6387424f-b981-4fe8-ba2d-34ae067c5adb" />
+
+h. HTTP Response – “HTTP 200”
+
+- Kiểu: http response
+
+- Tên: HTTP 200
+
+- Status: 200 OK
+
+- Chức năng: Trả kết quả JSON về client khi gọi API /api/sensor.
+
+<img width="1913" height="981" alt="image" src="https://github.com/user-attachments/assets/858b6a0a-d4ef-4b79-9c87-89b30d7d0c73" />
 
 🌐 Bước 2 – Tạo Frontend (index.html)
 
