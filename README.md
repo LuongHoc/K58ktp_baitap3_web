@@ -46,9 +46,19 @@ Yêu cầu     : LẬP TRÌNH ỨNG DỤNG WEB trên nền linux
 
 1. Bước 1. Bật WSL2 (Windows Subsystem for Linux)
 
-Mở PowerShell (Admin) → chạy: wsl --install
+- Mở PowerShell (Admin) → chạy: wsl --install
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2f5bd8a2-b835-4e31-ae2c-d875501efdbc" />
+
+- Kiểm tra: wsl -l -v
+
+
+Thấy Ubuntu có “Version 2” là OK.
+
+<img width="1916" height="1028" alt="image" src="https://github.com/user-attachments/assets/4ba9361f-3e07-4d07-98c1-08ab29c7c17f" />
+
+
+
 
 
 
