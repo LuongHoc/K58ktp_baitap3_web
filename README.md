@@ -386,7 +386,7 @@ node-red-node-random
 
 <img width="1917" height="1021" alt="image" src="https://github.com/user-attachments/assets/5b85bc0c-2fc5-4d16-addf-1afaa7c578bc" />
 
-4.3 Tạo Flow mới
+Tạo Flow mới
 
 - Chọn tab mới và tạo các node như sau:
 
@@ -527,72 +527,47 @@ h. HTTP Response – “HTTP 200”
 
 <img width="1913" height="981" alt="image" src="https://github.com/user-attachments/assets/858b6a0a-d4ef-4b79-9c87-89b30d7d0c73" />
 
-🌐 Bước 2 – Tạo Frontend (index.html)
+4.2 Tạo Frontend (index.html)
 
-Tạo file trong thư mục /frontend/index.html
-(Nó sẽ được Nginx serve qua http://localhost
-)
+a. Trong Ubuntu (WSL), vào thư mục dự án trên ổ D : 
 
-✳️ Nội dung mẫu:
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title>Giám sát IoT - Lương Văn Học</title>
-  <style>
-    body { font-family: Arial; text-align: center; background: #f7f9fb; }
-    h1 { color: #333; }
-    .sensor {
-      display: inline-block;
-      padding: 20px;
-      margin: 20px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.1);
-    }
-  </style>
-</head>
-<body>
-  <h1>🌡️ Giám sát cảm biến IoT (Docker + Node-RED + Grafana)</h1>
-  <div id="data">
-    <div class="sensor">
-      <h3>Nhiệt độ: <span id="temp">--</span> °C</h3>
-      <h3>Độ ẩm: <span id="hum">--</span> %</h3>
-    </div>
-  </div>
-  <script>
-    async function updateData() {
-      const res = await fetch("http://localhost:1880/api/sensor");
-      const data = await res.json();
-      if (data && data[0]) {
-        document.getElementById("temp").innerText = data[0].temperature;
-        document.getElementById("hum").innerText = data[0].humidity;
-      }
-    }
-    setInterval(updateData, 5000);
-    updateData();
-  </script>
-</body>
-</html>
+```
+cd /mnt/d/baitap3_web/frontend
+nano index.html
 
-📊 Bước 3 – Hiển thị biểu đồ trong Grafana
+```
 
-Truy cập 👉 http://localhost:3000
+<img width="1868" height="983" alt="image" src="https://github.com/user-attachments/assets/3063d026-be35-4826-b255-42b299211ce3" />
 
-Add Data Source → chọn InfluxDB
+b. Tạo file app.js để gọi API Node-RED
 
-URL: http://influxdb:8086
+Vẫn ở thư mục frontend: nano app.js
 
-Database: iot_data
+<img width="1879" height="984" alt="image" src="https://github.com/user-attachments/assets/9780b2fb-9e53-4591-b265-742a82987287" />
 
-Save & Test ✅
+c. Đảm bảo Nginx đang chạy
 
-Tạo Dashboard → Add Panel → Query:
+Trong Ubuntu (WSL), tại thư mục dự án baitap3_web:
 
-SELECT mean("temperature") FROM "sensors" WHERE $timeFilter GROUP BY time(10s)
+```
+cd /mnt/d/baitap3_web
+docker compose ps
+
+```
+
+<img width="1894" height="1017" alt="image" src="https://github.com/user-attachments/assets/ef50fb36-7564-4319-bd04-e18a3736ed06" />
+
+d. Mở web frontend
+
+Trình duyệt ↦ vào:  http://localhost
+
+<img width="1914" height="979" alt="image" src="https://github.com/user-attachments/assets/0b385966-aee9-4e6e-9dff-633bcd8a6d2e" />
 
 
-Bạn sẽ thấy biểu đồ realtime chạy rất đẹp 🎉
+
+
+
+
 
 
 
