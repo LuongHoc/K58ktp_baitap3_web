@@ -208,6 +208,50 @@ volumes:
 
 - Nhấn Ctrl + X để thoát khỏi nano
 
+3.3 Tạo file nginx.conf
+
+- Trong thư mục /mnt/d/baitap3_web, gõ lệnh: nano nginx.conf
+
+
+Dán nội dung dưới đây:
+
+```
+events {}
+
+http {
+  server {
+    listen 80;
+    server_name hocluong.com;
+
+    # Trang web chính (Frontend)
+    location / {
+      root /usr/share/nginx/html;
+      index index.html;
+    }
+
+    # Truy cập Node-RED qua http://hocluong.com/nodered
+    location /nodered/ {
+      proxy_pass http://nodered:1880/;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    # Truy cập Grafana qua http://hocluong.com/grafana
+    location /grafana/ {
+      proxy_pass http://grafana:3000/;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+    }
+  }
+}
+````
+
+Nhấn Ctrl + O → Enter để lưu
+
+Nhấn Ctrl + X để thoát
+
+
+
 
 
 
