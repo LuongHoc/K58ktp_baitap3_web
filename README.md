@@ -44,7 +44,7 @@ Yêu cầu     : LẬP TRÌNH ỨNG DỤNG WEB trên nền linux
 
 ## 1. Chọn phương án Docker Desktop + WSL2
 
-1.  Bật WSL2 (Windows Subsystem for Linux)
+1.1.  Bật WSL2 (Windows Subsystem for Linux)
 
 - Mở PowerShell (Admin) → chạy: wsl --install
 
@@ -67,8 +67,23 @@ Tạo username hoc và password 123456(nhập 2 lần)
 
 <img width="1893" height="1032" alt="image" src="https://github.com/user-attachments/assets/a1c08ee9-1409-41dc-bd91-20c86ad70e80" />
 
+## 2.Cài đặt Docker
 
+2.1 Tải Docker Desktop
 
+- Vào link chính thức: https://www.docker.com/
+
+Chọn: Tải xuống cho Windows – AMD64
+
+<img width="1903" height="1020" alt="image" src="https://github.com/user-attachments/assets/1028b673-ffbe-4aad-8932-6fc49caf7726" />
+
+2.2 Chạy cài đặt Docker Desktop
+
+- Mở file .exe
+
+<img width="1839" height="959" alt="image" src="https://github.com/user-attachments/assets/d7259166-4ce9-43df-906b-56a732bbf9b2" />
+
+Sau đó bấm OK
 
 
 
