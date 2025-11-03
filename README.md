@@ -527,6 +527,10 @@ h. HTTP Response – “HTTP 200”
 
 <img width="1913" height="981" alt="image" src="https://github.com/user-attachments/assets/858b6a0a-d4ef-4b79-9c87-89b30d7d0c73" />
 
+- Kết quả khi test:  http://localhost:1880/api/sensor
+
+<img width="1882" height="738" alt="image" src="https://github.com/user-attachments/assets/640323a7-487e-4496-88c0-d96391063ee3" />
+
 4.2 Tạo Frontend (index.html)
 
 a. Trong Ubuntu (WSL), vào thư mục dự án trên ổ D : 
