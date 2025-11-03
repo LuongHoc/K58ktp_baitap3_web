@@ -107,3 +107,115 @@ Sau đó bấm Apply & Restart
 
 → Docker đã hoạt động thành công 🎉
 
+## 3. DỰNG HỆ THỐNG DOCKER BẰNG FILE docker-compose.yml
+
+3.1 Tạo thư mục dự án
+
+- Trong Ubuntu (WSL2), gõ:
+
+cd /mnt/d
+
+mkdir baitap3_web
+
+cd baitap3_web
+
+<img width="1895" height="1029" alt="image" src="https://github.com/user-attachments/assets/2f1b2599-7b63-4e8f-b327-5b43f3bd056b" />
+
+3.2 Tạo file docker-compose.yml
+
+nano docker-compose.yml
+
+<img width="1918" height="983" alt="image" src="https://github.com/user-attachments/assets/b707b9e8-5db5-4862-9430-0b6caa2eb861" />
+
+- Sao chép toàn bộ nội dung bên dưới
+```
+version: "3.8"
+
+services:
+  mariadb:
+    image: mariadb:10.6
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: webdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8080:80"
+    depends_on:
+      - mariadb
+
+  nodered:
+    image: nodered/node-red
+    container_name: nodered
+    restart: always
+    ports:
+      - "1880:1880"
+    volumes:
+      - nodered_data:/data
+
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    restart: always
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend:/usr/share/nginx/html
+
+volumes:
+  mariadb_data:
+  influxdb_data:
+  nodered_data:
+```
+
+- Nhấn Ctrl + O → Enter để lưu
+
+- Nhấn Ctrl + X để thoát khỏi nano
+
+
+
+
+
+
+
+
+
+
+
+
