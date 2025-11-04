@@ -573,8 +573,7 @@ Panel title: Humidity (%)
 
 - Nhấn Apply để lưu panel.
 
-<img width="1917" height="1024" alt="image" src="https://github.com/user-attachments/assets/7cf9b7b2-9a5e-4a52-980b-4f638489d256" />
-
+<img width="1920" height="977" alt="image" src="https://github.com/user-attachments/assets/e3510cd6-a304-4b08-900f-cafa34f61317" />
 
 
 ### 4.3 Tạo Frontend (index.html)
