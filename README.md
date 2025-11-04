@@ -367,7 +367,7 @@ Mục tiêu:
 
 - Grafana vẽ biểu đồ trực quan từ dữ liệu InfluxDB.
 
-4.1 Cấu hình Node-RED (Backend API)
+### 4.1 Cấu hình Node-RED (Backend API)
 - Mở Node-RED
 
 Truy cập: http://localhost:1880
@@ -530,8 +530,54 @@ h. HTTP Response – “HTTP 200”
 - Kết quả khi test:  http://localhost:1880/api/sensor
 
 <img width="1882" height="738" alt="image" src="https://github.com/user-attachments/assets/640323a7-487e-4496-88c0-d96391063ee3" />
+### 4.2 Kết nối Grafana và hiển thị biểu đồ
 
-4.2 Tạo Frontend (index.html)
+a. Đăng nhập Grafana
+
+- Truy cập:  http://localhost:3000
+
+•	Username: admin
+
+•	Password: admin (sau đó nhập mật khẩu mới)
+
+b. Thêm nguồn dữ liệu (Data Source)
+- Ở menu bên trái → Connections → Data sources
+- Chọn InfluxDB
+- Cấu hình như sau:
+- URL: http://influxdb:8086
+- Database: iot_data
+- Query Language: InfluxQL
+- User: root
+- Password: 12456
+- Nhấn Save & Test 
+
+<img width="1919" height="1035" alt="image" src="https://github.com/user-attachments/assets/93632421-6dc6-4b94-b8cc-ede681b28fdc" />
+
+<img width="1920" height="982" alt="image" src="https://github.com/user-attachments/assets/52392536-fa58-4260-87f8-d9dfa9012ae0" />
+
+c. Tạo Dashboard hiển thị dữ liệu
+- Vào Dashboards → New → New dashboard
+- Add new panel
+- Trong phần Query (InfluxQL), nhập lệnh:
+```
+SELECT mean("temperature") FROM "sensors" WHERE $timeFilter GROUP BY time(5s) fill(null)
+```
+Panel title: Temperature (°C)
+
+Làm tương tự tạo panel thứ hai:
+```
+SELECT mean("humidity") FROM "sensors" WHERE $timeFilter GROUP BY time(5s) fill(null)
+```
+
+Panel title: Humidity (%)
+
+- Nhấn Apply để lưu panel.
+
+<img width="1917" height="1024" alt="image" src="https://github.com/user-attachments/assets/7cf9b7b2-9a5e-4a52-980b-4f638489d256" />
+
+
+
+### 4.3 Tạo Frontend (index.html)
 
 a. Trong Ubuntu (WSL), vào thư mục dự án trên ổ D : 
 
