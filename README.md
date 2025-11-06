@@ -1,4 +1,4 @@
-# Lương Văn Học - K225480106025
+//////# Lương Văn Học - K225480106025
 # K58ktp - Môn phát triển ứng dụng trên nền web
 # Nội dung bài tập 3:
 Yêu cầu     : LẬP TRÌNH ỨNG DỤNG WEB trên nền linux
@@ -437,7 +437,7 @@ InfluxDB config:
 
 <img width="1920" height="1006" alt="image" src="https://github.com/user-attachments/assets/29c2f199-f7fb-48a7-b665-3ff2007594c6" />
 
-### 4.2 Cấu hình Node-RED (Backend API)
+### 4.2 Cấu hình Node-RED 
 - Mở Node-RED
 
 Truy cập: http://localhost:1880
@@ -503,15 +503,15 @@ b. Thêm nguồn dữ liệu (Data Source)
 - Chọn InfluxDB
 - Cấu hình như sau:
 - URL: http://influxdb:8086
-- Database: iot_data
+- Database: iotdb
 - Query Language: InfluxQL
-- User: root
-- Password: 12456
+- User: admin
+- Password: admin123
 - Nhấn Save & Test 
 
-<img width="1919" height="1035" alt="image" src="https://github.com/user-attachments/assets/93632421-6dc6-4b94-b8cc-ede681b28fdc" />
+<img width="1856" height="1041" alt="image" src="https://github.com/user-attachments/assets/939c4fa4-0bc2-4de8-b537-f21c42869b17" />
 
-<img width="1920" height="982" alt="image" src="https://github.com/user-attachments/assets/52392536-fa58-4260-87f8-d9dfa9012ae0" />
+<img width="1915" height="1027" alt="image" src="https://github.com/user-attachments/assets/4cfd9c82-ea7c-4415-bd6c-22870f498860" />
 
 c. Tạo Dashboard hiển thị dữ liệu
 - Vào Dashboards → New → New dashboard
