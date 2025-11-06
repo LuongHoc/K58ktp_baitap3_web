@@ -496,7 +496,7 @@ a. Đăng nhập Grafana
 
 •	Username: admin
 
-•	Password: admin (sau đó nhập mật khẩu mới)
+•	Password: admin123 (sau đó nhập mật khẩu mới)
 
 b. Thêm nguồn dữ liệu (Data Source)
 - Ở menu bên trái → Connections → Data sources
@@ -518,20 +518,30 @@ c. Tạo Dashboard hiển thị dữ liệu
 - Add new panel
 - Trong phần Query (InfluxQL), nhập lệnh:
 ```
-SELECT mean("temperature") FROM "sensors" WHERE $timeFilter GROUP BY time(5s) fill(null)
+SELECT mean("temp") AS "Nhiệt độ"
+FROM "sensor_data"
+WHERE $timeFilter
+GROUP BY time($__interval) fill(null)
 ```
 Panel title: Temperature (°C)
 
+<img width="1880" height="964" alt="image" src="https://github.com/user-attachments/assets/11f3148c-9c31-40a8-a929-2e285199ce80" />
+
 Làm tương tự tạo panel thứ hai:
 ```
-SELECT mean("humidity") FROM "sensors" WHERE $timeFilter GROUP BY time(5s) fill(null)
+SELECT mean("hum") AS "Độ ẩm" 
+FROM "sensor_data"
+WHERE $timeFilter 
+GROUP BY time($__interval) fill(null)
 ```
-
 Panel title: Humidity (%)
+
+<img width="1920" height="1027" alt="image" src="https://github.com/user-attachments/assets/6378929c-8403-4974-830a-e74eb66b7c1c" />
 
 - Nhấn Apply để lưu panel.
 
-<img width="1920" height="1033" alt="image" src="https://github.com/user-attachments/assets/759da4bd-c25c-479b-9bde-8c6fb7c07e25" />
+![Uploading image.png…]()
+
 
 ### 4.3 Tạo Frontend (index.html)
 
