@@ -1,4 +1,4 @@
-//////# Lương Văn Học - K225480106025
+# Lương Văn Học - K225480106025
 # K58ktp - Môn phát triển ứng dụng trên nền web
 # Nội dung bài tập 3:
 Yêu cầu     : LẬP TRÌNH ỨNG DỤNG WEB trên nền linux
