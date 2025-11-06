@@ -486,6 +486,9 @@ Node HTTP In (POST /api/login) → Function (Prepare SQL login) → MariaDB (iot
 
 Dùng để xác thực tài khoản từ bảng users trong MariaDB, so sánh username và password_hash (được gửi từ front-end).
 
+test kiểm tra user
+
+<img width="1619" height="1010" alt="image" src="https://github.com/user-attachments/assets/541e7e4d-3905-4719-92d9-8dc3134bab39" />
 
 
 ### 4.2 Kết nối Grafana và hiển thị biểu đồ
