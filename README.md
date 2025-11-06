@@ -115,93 +115,115 @@ Sau đó bấm Apply & Restart
 
 cd /mnt/d
 
-mkdir baitap3_web
+mkdir bt3-web-iot
 
-cd baitap3_web
+cd bt3-web-iot
 
-<img width="1895" height="1029" alt="image" src="https://github.com/user-attachments/assets/2f1b2599-7b63-4e8f-b327-5b43f3bd056b" />
+<img width="1880" height="975" alt="image" src="https://github.com/user-attachments/assets/516e09b9-b284-44bd-baba-0381843da71d" />
 
 3.2 Tạo file docker-compose.yml
 
 nano docker-compose.yml
 
-<img width="1918" height="983" alt="image" src="https://github.com/user-attachments/assets/b707b9e8-5db5-4862-9430-0b6caa2eb861" />
+<img width="1920" height="1048" alt="image" src="https://github.com/user-attachments/assets/a4f4ac7d-09b8-4f81-b9ab-09929db4893d" />
 
 - Sao chép toàn bộ nội dung bên dưới
 ```
-version: "3.8"
+version: "3.9"
 
 services:
   mariadb:
-    image: mariadb:10.6
+    image: mariadb:10.11
     container_name: mariadb
-    restart: always
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: webdb
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: iotdb
+      MYSQL_USER: iotuser
+      MYSQL_PASSWORD: iot123
     ports:
       - "3306:3306"
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - ./db_data:/var/lib/mysql
+    networks:
+      - iotnet
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
     container_name: phpmyadmin
-    restart: always
+    restart: unless-stopped
     environment:
       PMA_HOST: mariadb
       PMA_USER: root
-      PMA_PASSWORD: root
+      PMA_PASSWORD: root123
     ports:
-      - "8080:80"
+      - "8081:80"         
     depends_on:
       - mariadb
+    networks:
+      - iotnet
 
   nodered:
-    image: nodered/node-red
+    image: nodered/node-red:latest
     container_name: nodered
-    restart: always
+    restart: unless-stopped
     ports:
       - "1880:1880"
     volumes:
-      - nodered_data:/data
+      - ./nodered_data:/data
+    depends_on:
+      - mariadb
+      - influxdb
+    networks:
+      - iotnet
 
   influxdb:
     image: influxdb:1.8
     container_name: influxdb
-    restart: always
+    restart: unless-stopped
     ports:
       - "8086:8086"
     volumes:
-      - influxdb_data:/var/lib/influxdb
+      - ./influxdb_data:/var/lib/influxdb
+    networks:
+      - iotnet
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:latest
     container_name: grafana
-    restart: always
+    restart: unless-stopped
     ports:
       - "3000:3000"
-    depends_on:
-      - influxdb
     environment:
       - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+    depends_on:
+      - influxdb
+    networks:
+      - iotnet
 
-  nginx:
+  nginx:                  
     image: nginx:latest
     container_name: nginx
-    restart: always
+    restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"          # web IoT SPA qua Nginx
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./frontend:/usr/share/nginx/html
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - nodered
+      - grafana
+    networks:
+      - iotnet
 
-volumes:
-  mariadb_data:
-  influxdb_data:
-  nodered_data:
+networks:
+  iotnet:
+    driver: bridge
+
 ```
 
 - Nhấn Ctrl + O → Enter để lưu
@@ -339,7 +361,7 @@ mariadb, phpmyadmin, nodered, influxdb, grafana, nginx
 Dịch vụ	Cổng	Truy cập
 Trang chính (Nginx)	80	http://localhost
 
-phpMyAdmin	8080	http://localhost:8080
+phpMyAdmin	8081	http://localhost:8081
 
 Node-RED	1880	http://localhost:1880
 
@@ -347,7 +369,7 @@ Grafana	3000	http://localhost:3000
 
 <img width="1847" height="966" alt="image" src="https://github.com/user-attachments/assets/ec53cd6d-0a40-4689-a777-4616e065f16d" />
 
-<img width="1910" height="968" alt="image" src="https://github.com/user-attachments/assets/c6a88bcb-6cee-4cdb-aded-5d4761fcd558" />
+<img width="1910" height="987" alt="image" src="https://github.com/user-attachments/assets/69a61d51-406a-4a27-b49a-8a6f2be5f6e8" />
 
 <img width="1903" height="972" alt="image" src="https://github.com/user-attachments/assets/28e047fc-4278-42d9-8517-05d32afcf994" />
 
@@ -355,19 +377,67 @@ Grafana	3000	http://localhost:3000
 
 ## 4. LẬP TRÌNH WEB FRONTEND + BACKEND (WEB IoT)
 
-Mục tiêu: 
+### 4.1 Thiết kế CSDL MariaDB
 
-- Tạo một web IoT giám sát nhiệt độ – độ ẩm realtime:
+Vào http://localhost:8081 → đăng nhập:
 
-- Node-RED sinh dữ liệu cảm biến (giả lập).
+•	user: root, pass: root123
 
-- Node-RED lưu vào InfluxDB để hiển thị biểu đồ.
+•	db: iotdb.
 
-- Frontend index.html gọi API từ Node-RED, hiển thị thông tin hiện tại.
+<img width="1920" height="977" alt="image" src="https://github.com/user-attachments/assets/a5c1877a-049e-4e29-aa8a-b3c2ec76ca82" />
 
-- Grafana vẽ biểu đồ trực quan từ dữ liệu InfluxDB.
+Chạy SQL:
 
-### 4.1 Cấu hình Node-RED (Backend API)
+```
+-- bảng user login
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL
+);
+
+-- tạo 1 user: admin / 123456 (base64 là MTIzNDU2)
+INSERT INTO users (username, password_hash)
+VALUES ('admin', '	MTIzNDU2');
+
+-- bảng giá trị mới nhất của sensor
+CREATE TABLE sensor_latest (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  sensor_name VARCHAR(50) NOT NULL,
+  value DOUBLE NOT NULL,
+  updated_at DATETIME NOT NULL,
+  UNIQUE KEY uq_sensor (sensor_name)
+);
+```
+<img width="1920" height="974" alt="image" src="https://github.com/user-attachments/assets/f3743ad7-8895-44cd-8b35-1ea275f9e9b7" />
+
+<img width="1917" height="1025" alt="image" src="https://github.com/user-attachments/assets/35c44fe9-9e18-44af-8db8-57783885c11b" />
+### 4.2 Kết nối MariaDB & InfluxDB
+
+MySQL:
+
+•	Host: mariadb
+
+•	Port: 3306
+
+•	Database: iotdb
+
+•	User: iotuser
+
+•	Password: iot123
+
+<img width="1871" height="989" alt="image" src="https://github.com/user-attachments/assets/329fe09f-af33-4d21-9341-aef62c7b7dd8" />
+
+InfluxDB config:
+
+•	URL: http://influxdb:8086
+
+•	Database: iotdb.
+
+<img width="1920" height="1006" alt="image" src="https://github.com/user-attachments/assets/29c2f199-f7fb-48a7-b665-3ff2007594c6" />
+
+### 4.2 Cấu hình Node-RED (Backend API)
 - Mở Node-RED
 
 Truy cập: http://localhost:1880
@@ -376,9 +446,11 @@ Truy cập: http://localhost:1880
 
 Vào menu → Manage palette → Install
 
-Tìm và cài 3 gói:
+Tìm và cài các gói:
 
 node-red-contrib-influxdb
+
+node-red-node-mysql
 
 node-red-dashboard
 
@@ -386,150 +458,36 @@ node-red-node-random
 
 <img width="1917" height="1021" alt="image" src="https://github.com/user-attachments/assets/5b85bc0c-2fc5-4d16-addf-1afaa7c578bc" />
 
-Tạo Flow mới
+Hệ thống được thiết kế bằng Node-RED để mô phỏng cảm biến và cung cấp API truy cập dữ liệu. Luồng chính gồm 4 nhóm chức năng:
 
-- Chọn tab mới và tạo các node như sau:
+1️⃣ Sinh dữ liệu cảm biến định kỳ
 
-<img width="1911" height="974" alt="image" src="https://github.com/user-attachments/assets/080bba59-749b-4610-8a0a-fae9f249822d" />
+Node Inject (Tick 5s) → Function (Tạo dữ liệu temp/hum) → InfluxDB out 
 
-- Cấu hình từng node
+Chức năng: mô phỏng dữ liệu nhiệt độ (temp) và độ ẩm (hum) gửi vào cơ sở dữ liệu InfluxDB mỗi 5 giây.
 
-a. Inject – “Cập nhật cảm biến (1s)”
+Dữ liệu lưu vào database: iotdb, measurement: sensor_data.
 
-- Kiểu: inject
+2️⃣ Sinh dữ liệu mẫu khác (tùy chọn)
 
-- Tên: Cập nhật cảm biến (1s)
+Node Inject (Tick 10s) → Function (Tạo dữ liệu cảm biến) → InfluxDB out (iotdb)
 
-- Repeat: Every 1 second
+Dùng để tạo thêm dữ liệu mẫu phục vụ kiểm thử giao diện hiển thị.
 
-- Output: timestamp
+3️⃣ API lấy dữ liệu mới nhất
 
-- Chức năng: Kích hoạt tự động mỗi giây để sinh dữ liệu cảm biến giả.
+Node HTTP In (GET /api/latest) → Function (Prepare SQL latest) → InfluxDB in (iotdb) → Function (Format JSON) → HTTP Response (200 latest)
 
-<img width="1914" height="984" alt="image" src="https://github.com/user-attachments/assets/42b7428c-388f-401b-aaf4-ff811b9e9ea4" />
+Khi truy cập endpoint http://localhost:1880/api/latest, hệ thống trả về giá trị nhiệt độ và độ ẩm mới nhất từ InfluxDB dưới dạng JSON.
 
-b. Function – “Sinh dữ liệu giả (sensors)”
+4️⃣ API đăng nhập
 
-- Kiểu: function
+Node HTTP In (POST /api/login) → Function (Prepare SQL login) → MariaDB (iotdb) → Function (Xử lý kết quả login) → HTTP Response (200 login)
 
-- Tên: Sinh dữ liệu giả (sensors)
+Dùng để xác thực tài khoản từ bảng users trong MariaDB, so sánh username và password_hash (được gửi từ front-end).
 
-- Code:
-```
-msg.measurement = "sensors";        // tên measurement
-msg.tags = { device: "sensor_A1" }; // tag tuỳ ý
-msg.payload = {
-  temperature: Math.round(Math.random() * 5 + 25), // số
-  humidity: Math.round(Math.random() * 30 + 50)    // số
-};
-return msg;
 
-```
 
-- Chức năng: Sinh ngẫu nhiên dữ liệu nhiệt độ (25–30°C) và độ ẩm (50–70%) gửi sang InfluxDB.
-
-<img width="1914" height="990" alt="image" src="https://github.com/user-attachments/assets/26cfa358-f515-4d65-8b54-0fb2bd1edb64" />
-
-c. InfluxDB Out – “Ghi dữ liệu cảm biến”
-
-- Kiểu: influxdb out
-
-- Tên: Ghi dữ liệu cảm biến
-
-- Server: [v1.x] influxdb
-
-- Database: iot_data
-
-- Measurement: sensors
-
-- Chức năng: Ghi dữ liệu sensor sinh ra vào database iot_data.
-
-<img width="1903" height="960" alt="image" src="https://github.com/user-attachments/assets/7ef657e7-798d-4979-bfe0-607726b7cf42" />
-
-<img width="1919" height="947" alt="image" src="https://github.com/user-attachments/assets/ef633b6b-39e3-4106-8bfd-3e40a18322f5" />
-
-d. HTTP In – “API - GET /api/sensor”
-
-- Kiểu: http in
-
-- Tên: API - GET /api/sensor
-
-- Method: GET
-
-- URL: /api/sensor
-
-- Chức năng: Tạo endpoint API để client (frontend) truy vấn dữ liệu cảm biến.
-
-<img width="1914" height="951" alt="image" src="https://github.com/user-attachments/assets/99cc2b70-a07c-4af3-9d99-da2ff0c4578e" />
-
-e. Function – “Tạo query”
-
-- Kiểu: function
-
-- Tên: Tạo query
-
-- Code:
-```
-
-msg.query = "SELECT * FROM sensors ORDER BY time DESC LIMIT 5";
-return msg;
-
-```
-
-- Chức năng: Tạo câu truy vấn lấy 5 bản ghi cảm biến mới nhất từ InfluxDB.
-
-<img width="1920" height="1019" alt="image" src="https://github.com/user-attachments/assets/30ef629b-2d7e-485e-8c68-24df419f2ec5" />
-
-f. InfluxDB In – “Đọc Influx (v1.x)”
-
-- Kiểu: influxdb in
-
-- Server: [v1.x] influxdb
-
-- Database: iot_data
-
-- Query: lấy từ msg.query
-
-- Chức năng: Truy vấn dữ liệu cảm biến từ InfluxDB theo câu query đã tạo.
-
-<img width="1913" height="1045" alt="image" src="https://github.com/user-attachments/assets/1e2c1d6f-5784-4e87-8026-ff6d6d20ac19" />
-
-g. Function – “Trả JSON + CORS”
-
-- Kiểu: function
-
-- Tên: Trả JSON + CORS
-
-- Code:
-```
-msg.headers = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*'
-};
-msg.statusCode = 200;
-return msg;
-
-```
-
-- Chức năng: Định dạng dữ liệu đầu ra JSON, bật CORS để frontend truy cập được.
-
-<img width="1920" height="1010" alt="image" src="https://github.com/user-attachments/assets/6387424f-b981-4fe8-ba2d-34ae067c5adb" />
-
-h. HTTP Response – “HTTP 200”
-
-- Kiểu: http response
-
-- Tên: HTTP 200
-
-- Status: 200 OK
-
-- Chức năng: Trả kết quả JSON về client khi gọi API /api/sensor.
-
-<img width="1913" height="981" alt="image" src="https://github.com/user-attachments/assets/858b6a0a-d4ef-4b79-9c87-89b30d7d0c73" />
-
-- Kết quả khi test:  http://localhost:1880/api/sensor
-
-<img width="1882" height="738" alt="image" src="https://github.com/user-attachments/assets/640323a7-487e-4496-88c0-d96391063ee3" />
 ### 4.2 Kết nối Grafana và hiển thị biểu đồ
 
 a. Đăng nhập Grafana
