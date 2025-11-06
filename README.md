@@ -557,16 +557,7 @@ nano index.html
 
 <img width="1916" height="1068" alt="image" src="https://github.com/user-attachments/assets/1631a4b6-8d63-4ff2-92a0-978ae8a60ad3" />
 
-
-b. Tạo file app.js để gọi API Node-RED
-
-Vẫn ở thư mục frontend: nano app.js
-
-<img width="1879" height="984" alt="image" src="https://github.com/user-attachments/assets/9780b2fb-9e53-4591-b265-742a82987287" />
-
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/cb13d575-b59f-4d8b-b004-18e281f67ac0" />
-
-c. Đảm bảo Nginx đang chạy
+b. Đảm bảo Nginx đang chạy
 
 Trong Ubuntu (WSL), tại thư mục dự án baitap3_web:
 
@@ -575,12 +566,16 @@ cd /mnt/d/baitap3_web
 docker compose ps
 
 ```
+<img width="1894" height="1017" alt="image" src="https://github.com/user-attachments/assets/ef50fb36-7564-4319-bd04-e18a3736ed06" />
 
-d. Mở web frontend
+c. Mở web frontend
 
 Trình duyệt ↦ vào:  http://localhost
 
-<img width="1894" height="1017" alt="image" src="https://github.com/user-attachments/assets/ef50fb36-7564-4319-bd04-e18a3736ed06" />
+<img width="1917" height="1080" alt="image" src="https://github.com/user-attachments/assets/ab4b9689-8233-4b68-b7e8-27b3725edb91" />
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/cb13d575-b59f-4d8b-b004-18e281f67ac0" />
+
 
 
 
