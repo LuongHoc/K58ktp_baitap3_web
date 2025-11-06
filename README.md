@@ -540,7 +540,6 @@ Panel title: Humidity (%)
 
 - Nhấn Apply để lưu panel.
 
-![Uploading image.png…]()
 
 
 ### 4.3 Tạo Frontend (index.html)
@@ -548,18 +547,21 @@ Panel title: Humidity (%)
 a. Trong Ubuntu (WSL), vào thư mục dự án trên ổ D : 
 
 ```
-cd /mnt/d/baitap3_web/frontend
+cd /mnt/d/bt3-web-iot/frontend
 nano index.html
 
 ```
 
-<img width="1868" height="983" alt="image" src="https://github.com/user-attachments/assets/3063d026-be35-4826-b255-42b299211ce3" />
+<img width="1916" height="1068" alt="image" src="https://github.com/user-attachments/assets/1631a4b6-8d63-4ff2-92a0-978ae8a60ad3" />
+
 
 b. Tạo file app.js để gọi API Node-RED
 
 Vẫn ở thư mục frontend: nano app.js
 
 <img width="1879" height="984" alt="image" src="https://github.com/user-attachments/assets/9780b2fb-9e53-4591-b265-742a82987287" />
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/cb13d575-b59f-4d8b-b004-18e281f67ac0" />
 
 c. Đảm bảo Nginx đang chạy
 
@@ -571,13 +573,11 @@ docker compose ps
 
 ```
 
-<img width="1894" height="1017" alt="image" src="https://github.com/user-attachments/assets/ef50fb36-7564-4319-bd04-e18a3736ed06" />
-
 d. Mở web frontend
 
 Trình duyệt ↦ vào:  http://localhost
 
-<img width="1914" height="979" alt="image" src="https://github.com/user-attachments/assets/0b385966-aee9-4e6e-9dff-633bcd8a6d2e" />
+<img width="1894" height="1017" alt="image" src="https://github.com/user-attachments/assets/ef50fb36-7564-4319-bd04-e18a3736ed06" />
 
 
 
